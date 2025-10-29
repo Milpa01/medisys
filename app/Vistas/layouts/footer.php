@@ -11,7 +11,8 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
             <div class="row">
                 <div class="col-md-6">
                     <p class="mb-0 text-muted">
-                        © <?= date('Y') ?> MediSys - Sistema de Gestión Clínica
+                        © <?= date('Y') ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MediSys - Sistema de Gestión Clínica
                     </p>
                 </div>
                 <div class="col-md-6 text-end">

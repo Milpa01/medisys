@@ -82,54 +82,8 @@ $is_secretario = ($rol_id == 3);
             </a>
         </div>
         
-        <div class="nav-item">
-            <a href="<?= isset($base_url) ? $base_url : '' ?>/especialidades" class="nav-link" data-page="especialidades">
-                <i class="bi bi-heart-pulse"></i>
-                <span>Especialidades</span>
-            </a>
-        </div>
-        
-        <div class="nav-item">
-            <a href="<?= isset($base_url) ? $base_url : '' ?>/reportes" class="nav-link" data-page="reportes">
-                <i class="bi bi-graph-up"></i>
-                <span>Reportes</span>
-            </a>
-        </div>
         <?php endif; ?>
-        
-        <!-- Configuración -->
-        <div class="nav-section-title">Sistema</div>
-        
-        <div class="nav-item">
-            <a href="<?= isset($base_url) ? $base_url : '' ?>/perfil" class="nav-link" data-page="perfil">
-                <i class="bi bi-person-circle"></i>
-                <span>Mi Perfil</span>
-            </a>
-        </div>
-        
-        <?php if ($is_admin): ?>
-        <div class="nav-item">
-            <a href="<?= isset($base_url) ? $base_url : '' ?>/configuracion" class="nav-link" data-page="configuracion">
-                <i class="bi bi-gear-fill"></i>
-                <span>Configuración</span>
-            </a>
-        </div>
-        
-        <div class="nav-item">
-            <a href="<?= isset($base_url) ? $base_url : '' ?>/auditoria" class="nav-link" data-page="auditoria">
-                <i class="bi bi-shield-check"></i>
-                <span>Auditoría</span>
-            </a>
-        </div>
-        <?php endif; ?>
-        
-        <div class="nav-item">
-            <a href="<?= isset($base_url) ? $base_url : '' ?>/ayuda" class="nav-link" data-page="ayuda">
-                <i class="bi bi-question-circle"></i>
-                <span>Ayuda</span>
-            </a>
-        </div>
-        
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         <!-- Cerrar Sesión -->
         <div class="nav-item mt-3">
             <a href="<?= isset($base_url) ? $base_url : '' ?>/logout" class="nav-link logout">

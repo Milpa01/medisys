@@ -84,16 +84,6 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                     <?= htmlspecialchars($current_user['nombre'] ?? 'Usuario') ?>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="<?= isset($base_url) ? $base_url : '' ?>/perfil">
-                            <i class="bi bi-person me-2"></i>Mi Perfil
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="<?= isset($base_url) ? $base_url : '' ?>/configuracion">
-                            <i class="bi bi-gear me-2"></i>Configuración
-                        </a>
-                    </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item text-danger" href="<?= isset($base_url) ? $base_url : '' ?>/logout">
