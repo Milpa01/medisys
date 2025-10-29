@@ -40,6 +40,16 @@ return [
     'medicos/ver' => ['controller' => 'MedicosControlador', 'method' => 'ver'],
     'medicos/horarios' => ['controller' => 'MedicosControlador', 'method' => 'horarios'],
     
+    // ========== EXPEDIENTES ==========
+    'expedientes' => ['controller' => 'ExpedientesControlador', 'method' => 'index'],
+    'expedientes/ver' => ['controller' => 'ExpedientesControlador', 'method' => 'ver'],
+    'expedientes/editar' => ['controller' => 'ExpedientesControlador', 'method' => 'editar'],
+    'expedientes/actualizar' => ['controller' => 'ExpedientesControlador', 'method' => 'actualizar'],
+    'expedientes/crear' => ['controller' => 'ExpedientesControlador', 'method' => 'crear'],
+    'expedientes/guardar' => ['controller' => 'ExpedientesControlador', 'method' => 'guardar'],
+    'expedientes/imprimir' => ['controller' => 'ExpedientesControlador', 'method' => 'imprimir'],
+    'expedientes/buscarPorPaciente' => ['controller' => 'ExpedientesControlador', 'method' => 'buscarPorPaciente'],
+
     // Citas
     'citas' => ['controller' => 'CitasControlador', 'method' => 'index'],
     'citas/crear' => ['controller' => 'CitasControlador', 'method' => 'crear'],
