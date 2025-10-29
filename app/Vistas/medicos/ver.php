@@ -1,5 +1,6 @@
 <?php
-if (!defined('APP_PATH')) exit('No direct script access allowed');
+if (!defined('APP_PATH'))
+    exit('No direct script access allowed');
 ?>
 
 <!-- Encabezado del Médico -->
@@ -11,17 +12,17 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                     <div class="col-md-8">
                         <div class="d-flex align-items-center">
                             <?php if (!empty($medico['imagen'])): ?>
-                                <img src="<?= Util::asset('uploads/usuarios/' . $medico['imagen']) ?>" 
-                                     class="rounded-circle me-3" 
-                                     alt="<?= htmlspecialchars($medico['nombre'] . ' ' . $medico['apellidos']) ?>"
-                                     style="width: 100px; height: 100px; object-fit: cover;">
+                                <img src="<?= Util::asset('uploads/usuarios/' . $medico['imagen']) ?>"
+                                    class="rounded-circle me-3"
+                                    alt="<?= htmlspecialchars($medico['nombre'] . ' ' . $medico['apellidos']) ?>"
+                                    style="width: 100px; height: 100px; object-fit: cover;">
                             <?php else: ?>
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
-                                     style="width: 100px; height: 100px; font-size: 2.5rem;">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                                    style="width: 100px; height: 100px; font-size: 2.5rem;">
                                     <i class="bi bi-person-badge"></i>
                                 </div>
                             <?php endif; ?>
-                            
+
                             <div>
                                 <h3 class="mb-1">
                                     Dr(a). <?= htmlspecialchars($medico['nombre'] . ' ' . $medico['apellidos']) ?>
@@ -78,8 +79,7 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                             Volver
                         </a>
                         <?php if (Auth::hasRole('administrador')): ?>
-                            <a href="<?= Util::url('medicos/editar?id=' . $medico['id']) ?>" 
-                               class="btn btn-primary btn-sm">
+                            <a href="<?= Util::url('medicos/editar?id=' . $medico['id']) ?>" class="btn btn-primary btn-sm">
                                 <i class="bi bi-pencil me-1"></i>
                                 Editar
                             </a>
@@ -143,7 +143,7 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
 <div class="row">
     <!-- Columna Izquierda -->
     <div class="col-lg-4">
-        
+
         <!-- Información Profesional -->
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-primary text-white">
@@ -157,14 +157,14 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                     <small class="text-muted d-block">Especialidad</small>
                     <strong><?= !empty($medico['especialidad_nombre']) ? htmlspecialchars($medico['especialidad_nombre']) : 'No especificada' ?></strong>
                 </div>
-                
+
                 <?php if (!empty($medico['cedula_profesional'])): ?>
                     <div class="mb-3">
                         <small class="text-muted d-block">Cédula Profesional</small>
                         <strong><?= htmlspecialchars($medico['cedula_profesional']) ?></strong>
                     </div>
                 <?php endif; ?>
-                
+
                 <?php if (!empty($medico['consultorio'])): ?>
                     <div class="mb-3">
                         <small class="text-muted d-block">Consultorio</small>
@@ -174,12 +174,12 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                         </strong>
                     </div>
                 <?php endif; ?>
-                
+
                 <div class="mb-3">
                     <small class="text-muted d-block">Costo de Consulta</small>
                     <strong class="text-success"><?= Util::formatMoney($medico['costo_consulta']) ?></strong>
                 </div>
-                
+
                 <?php if (!empty($medico['biografia'])): ?>
                     <div class="mb-0">
                         <small class="text-muted d-block">Biografía</small>
@@ -188,7 +188,7 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                 <?php endif; ?>
             </div>
         </div>
-        
+
         <!-- Horarios de Atención -->
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-success text-white">
@@ -201,15 +201,15 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                 <div class="mb-3">
                     <small class="text-muted d-block">Horario</small>
                     <strong>
-                        <?= date('g:i A', strtotime($medico['horario_inicio'])) ?> - 
+                        <?= date('g:i A', strtotime($medico['horario_inicio'])) ?> -
                         <?= date('g:i A', strtotime($medico['horario_fin'])) ?>
                     </strong>
                 </div>
-                
+
                 <?php if (!empty($medico['dias_atencion'])): ?>
                     <div class="mb-0">
                         <small class="text-muted d-block mb-2">Días de Atención</small>
-                        <?php 
+                        <?php
                         $dias = explode(',', $medico['dias_atencion']);
                         $diasNombres = [
                             'lunes' => 'Lunes',
@@ -220,10 +220,10 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                             'sabado' => 'Sábado',
                             'domingo' => 'Domingo'
                         ];
-                        
-                        foreach ($dias as $dia): 
+
+                        foreach ($dias as $dia):
                             $dia = trim($dia);
-                        ?>
+                            ?>
                             <span class="badge bg-light text-dark me-1 mb-1">
                                 <?= $diasNombres[$dia] ?? $dia ?>
                             </span>
@@ -232,11 +232,11 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                 <?php endif; ?>
             </div>
         </div>
-        
-        <!-- Permisos y Accesos -->
-        <div class="card mb-4 shadow-sm" id="permisosCard">
-            <div class="card-header bg-info text-white">
-                <h5 class="card-title mb-0">
+
+        <!-- Sección de Permisos y Accesos -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
                     <i class="bi bi-shield-lock me-2"></i>
                     Permisos y Accesos
                 </h5>
@@ -248,15 +248,16 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                         <?= htmlspecialchars($medico['rol_nombre'] ?? 'Médico') ?>
                     </span>
                 </div>
-                
+
                 <div class="mb-3">
                     <small class="text-muted d-block">Usuario del Sistema</small>
-                    <strong><?= htmlspecialchars($medico['username']) ?></strong>
+                    <!-- LÍNEA CORREGIDA: Se agregó ?? 'N/A' -->
+                    <strong><?= htmlspecialchars($medico['username'] ?? 'N/A') ?></strong>
                 </div>
-                
+
                 <div class="mb-3">
                     <small class="text-muted d-block">Estado de la Cuenta</small>
-                    <?php if ($medico['is_active']): ?>
+                    <?php if ($medico['is_active'] ?? true): ?>
                         <span class="badge bg-success">
                             <i class="bi bi-check-circle me-1"></i>
                             Cuenta Activa
@@ -268,25 +269,23 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                         </span>
                     <?php endif; ?>
                 </div>
-                
-                <div class="mb-0">
+
+                <div class="mb-3">
                     <small class="text-muted d-block">Último Acceso</small>
-                    <strong>
-                        <?php if (!empty($medico['ultimo_login'])): ?>
-                            <?= Util::formatDateTime($medico['ultimo_login']) ?>
-                        <?php else: ?>
-                            Nunca ha ingresado
-                        <?php endif; ?>
-                    </strong>
+                    <?php if (!empty($medico['ultimo_acceso'])): ?>
+                        <strong><?= Util::formatDateTime($medico['ultimo_acceso']) ?></strong>
+                    <?php else: ?>
+                        <span class="text-muted">Nunca ha ingresado</span>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
-        
+
     </div>
-    
+
     <!-- Columna Derecha -->
     <div class="col-lg-8">
-        
+
         <!-- Próximas Citas -->
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-warning text-dark">
@@ -312,7 +311,8 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                                     <tr>
                                         <td>
                                             <strong><?= Util::formatDate($cita['fecha_cita']) ?></strong><br>
-                                            <small class="text-muted"><?= date('g:i A', strtotime($cita['hora_cita'])) ?></small>
+                                            <small
+                                                class="text-muted"><?= date('g:i A', strtotime($cita['hora_cita'])) ?></small>
                                         </td>
                                         <td>
                                             <a href="<?= Util::url('pacientes/ver?id=' . $cita['paciente_id']) ?>">
@@ -349,7 +349,7 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                 <?php endif; ?>
             </div>
         </div>
-        
+
         <!-- Gráfico de Consultas -->
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-secondary text-white">
@@ -379,17 +379,17 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                         </div>
                     </div>
                 </div>
-                
+
                 <?php if (isset($stats['promedio_pacientes_dia'])): ?>
                     <div class="alert alert-info mb-0 mt-3">
                         <i class="bi bi-info-circle me-2"></i>
-                        <strong>Promedio diario:</strong> 
+                        <strong>Promedio diario:</strong>
                         <?= number_format($stats['promedio_pacientes_dia'], 1) ?> pacientes por día
                     </div>
                 <?php endif; ?>
             </div>
         </div>
-        
+
         <!-- Acciones Rápidas -->
         <div class="card shadow-sm">
             <div class="card-header bg-dark text-white">
@@ -401,22 +401,22 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <a href="<?= Util::url('citas/crear?medico_id=' . $medico['id']) ?>" 
-                           class="btn btn-outline-primary w-100 py-3">
+                        <a href="<?= Util::url('citas/crear?medico_id=' . $medico['id']) ?>"
+                            class="btn btn-outline-primary w-100 py-3">
                             <i class="bi bi-calendar-plus d-block mb-2" style="font-size: 2rem;"></i>
                             Agendar Nueva Cita
                         </a>
                     </div>
                     <div class="col-md-4">
-                        <a href="<?= Util::url('medicos/horarios?id=' . $medico['id']) ?>" 
-                           class="btn btn-outline-success w-100 py-3">
+                        <a href="<?= Util::url('medicos/horarios?id=' . $medico['id']) ?>"
+                            class="btn btn-outline-success w-100 py-3">
                             <i class="bi bi-clock-history d-block mb-2" style="font-size: 2rem;"></i>
                             Gestionar Horarios
                         </a>
                     </div>
                     <div class="col-md-4">
-                        <a href="<?= Util::url('citas/agenda?medico_id=' . $medico['id']) ?>" 
-                           class="btn btn-outline-info w-100 py-3">
+                        <a href="<?= Util::url('citas/agenda?medico_id=' . $medico['id']) ?>"
+                            class="btn btn-outline-info w-100 py-3">
                             <i class="bi bi-calendar-week d-block mb-2" style="font-size: 2rem;"></i>
                             Ver Agenda
                         </a>
@@ -424,54 +424,57 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                 </div>
             </div>
         </div>
-        
+
     </div>
 </div>
 
 <!-- JavaScript -->
 <script>
-// Inicializar tooltips
-const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-});
+    // Inicializar tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
-// Función para imprimir perfil
-function imprimirPerfil() {
-    window.print();
-}
-
-// Atajos de teclado
-document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey) {
-        switch(e.key) {
-            case 'p':
-                e.preventDefault();
-                imprimirPerfil();
-                break;
-            case 'e':
-                e.preventDefault();
-                <?php if (Auth::hasRole('administrador')): ?>
-                    window.location.href = '<?= Util::url('medicos/editar?id=' . $medico['id']) ?>';
-                <?php endif; ?>
-                break;
-        }
-    } else if (e.key === 'Escape') {
-        window.location.href = '<?= Util::url('medicos') ?>';
+    // Función para imprimir perfil
+    function imprimirPerfil() {
+        window.print();
     }
-});
+
+    // Atajos de teclado
+    document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey) {
+            switch (e.key) {
+                case 'p':
+                    e.preventDefault();
+                    imprimirPerfil();
+                    break;
+                case 'e':
+                    e.preventDefault();
+                    <?php if (Auth::hasRole('administrador')): ?>
+                        window.location.href = '<?= Util::url('medicos/editar?id=' . $medico['id']) ?>';
+                    <?php endif; ?>
+                    break;
+            }
+        } else if (e.key === 'Escape') {
+            window.location.href = '<?= Util::url('medicos') ?>';
+        }
+    });
 </script>
 
 <!-- CSS para impresión -->
 <style>
-@media print {
-    .btn, .card-header a, .modal {
-        display: none !important;
+    @media print {
+
+        .btn,
+        .card-header a,
+        .modal {
+            display: none !important;
+        }
+
+        .card {
+            break-inside: avoid;
+            border: 1px solid #ddd !important;
+        }
     }
-    
-    .card {
-        break-inside: avoid;
-        border: 1px solid #ddd !important;
-    }
-}
 </style>

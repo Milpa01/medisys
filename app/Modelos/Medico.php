@@ -10,7 +10,7 @@ class Medico extends BaseModelo {
     
     public function getAllWithInfo() {
         $sql = "SELECT m.*, 
-                       u.nombre, u.apellidos, u.email, u.telefono, u.is_active as usuario_activo,
+                       u.nombre, u.apellidos, u.email, u.telefono, u.username, u.is_active as usuario_activo,
                        e.nombre as especialidad_nombre
                 FROM medicos m
                 INNER JOIN usuarios u ON m.usuario_id = u.id
@@ -22,11 +22,14 @@ class Medico extends BaseModelo {
     
     public function findWithInfo($id) {
         $sql = "SELECT m.*, 
-                       u.nombre, u.apellidos, u.email, u.telefono, u.direccion, u.imagen,
-                       e.nombre as especialidad_nombre
+                       u.nombre, u.apellidos, u.email, u.telefono, u.direccion, u.imagen, 
+                       u.username, u.is_active, u.ultimo_acceso, u.rol_id,
+                       e.nombre as especialidad_nombre, e.nombre as especialidad,
+                       r.nombre as rol_nombre
                 FROM medicos m
                 INNER JOIN usuarios u ON m.usuario_id = u.id
                 INNER JOIN especialidades e ON m.especialidad_id = e.id
+                LEFT JOIN roles r ON u.rol_id = r.id
                 WHERE m.id = ?";
         
         return $this->db->fetch($sql, [$id]);

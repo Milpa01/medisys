@@ -16,8 +16,9 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                         <div class="text-muted">
                             <strong>Dr(a). <?= htmlspecialchars($medico['nombre'] . ' ' . $medico['apellidos']) ?></strong>
                             <span class="mx-2">|</span>
-                            <span><?= htmlspecialchars($medico['especialidad']) ?></span>
-                            <?php if ($medico['consultorio']): ?>
+                            <!-- LÍNEA CORREGIDA: Se agregó fallback a especialidad_nombre y N/A -->
+                            <span><?= htmlspecialchars($medico['especialidad'] ?? $medico['especialidad_nombre'] ?? 'N/A') ?></span>
+                            <?php if (!empty($medico['consultorio'])): ?>
                                 <span class="mx-2">|</span>
                                 <i class="bi bi-door-open me-1"></i>
                                 <?= htmlspecialchars($medico['consultorio']) ?>
