@@ -8,13 +8,16 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sistema de Gestión Clínica MediSys">
     <meta name="author" content="MediSys">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
     <title><?= htmlspecialchars($title ?? 'MediSys - Sistema de Gestión Clínica') ?></title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?= isset($base_url) ? $base_url : '' ?>/public/img/favicon.ico">
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -24,98 +27,80 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
     
     <!-- Custom CSS -->
     <link href="<?= isset($base_url) ? $base_url : '' ?>/public/css/admin.css" rel="stylesheet">
+    <link href="<?= isset($base_url) ? $base_url : '' ?>/public/css/sidebar.css" rel="stylesheet">
     
-    <style>
-        :root {
-            --primary-color: #0ea5e9;
-            --primary-dark: #0284c7;
-            --primary-light: #e0f2fe;
-            --sidebar-width: 250px;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --sidebar-bg: linear-gradient(180deg, #1e293b, #334155);
-            --navbar-bg: #ffffff;
-        }
-        
-        [data-theme="dark"] {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #e2e8f0;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --sidebar-bg: linear-gradient(180deg, #020617, #0f172a);
-            --navbar-bg: #1e293b;
-        }
-        
-        * {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .top-navbar {
-            background: var(--navbar-bg);
-            padding: 1rem 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-        
-        .user-dropdown {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            color: var(--text-color);
-        }
-        
-        .theme-toggle {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .dropdown-menu {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-        }
-        
-        .dropdown-item {
-            color: var(--text-color);
-        }
-        
-        .dropdown-item:hover {
-            background-color: var(--primary-light);
-        }
-        
-        [data-theme="dark"] .dropdown-item:hover {
-            background-color: #334155;
-        }
-    </style>
+    <?php if (isset($custom_css)): ?>
+        <?php foreach ($custom_css as $css): ?>
+            <link href="<?= isset($base_url) ? $base_url : '' ?>/public/css/<?= $css ?>" rel="stylesheet">
+        <?php endforeach; ?>
+    <?php endif; ?>
 </head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-link d-md-none text-decoration-none" id="sidebarToggle">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <h5 class="mb-0 ms-2">
+                Bienvenido, <?= htmlspecialchars($current_user['nombre'] ?? 'Usuario') ?>
+            </h5>
+        </div>
+        
+        <div class="d-flex align-items-center gap-3">
+            <!-- Botón de Modo Nocturno -->
+            <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+                <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            </button>
+            
+            <!-- Notificaciones (Opcional) -->
+            <?php if (isset($notifications) && count($notifications) > 0): ?>
+            <div class="dropdown">
+                <button class="btn btn-link position-relative text-decoration-none" type="button" 
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <?= count($notifications) ?>
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <?php foreach ($notifications as $notification): ?>
+                    <li>
+                        <a class="dropdown-item" href="<?= $notification['link'] ?? '#' ?>">
+                            <small class="text-muted"><?= $notification['time'] ?? '' ?></small>
+                            <p class="mb-0"><?= htmlspecialchars($notification['message']) ?></p>
+                        </a>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+            
+            <!-- Dropdown de Usuario -->
+            <div class="dropdown">
+                <button class="btn user-dropdown dropdown-toggle" type="button" 
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle me-2"></i>
+                    <?= htmlspecialchars($current_user['nombre'] ?? 'Usuario') ?>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="<?= isset($base_url) ? $base_url : '' ?>/perfil">
+                            <i class="bi bi-person me-2"></i>Mi Perfil
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="<?= isset($base_url) ? $base_url : '' ?>/configuracion">
+                            <i class="bi bi-gear me-2"></i>Configuración
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="<?= isset($base_url) ? $base_url : '' ?>/logout">
+                            <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Footer - Pie de página del sitio
+ * Footer - Pie de página del sitio (con modo nocturno inline)
  * Ruta: app/Vistas/layouts/footer.php
  */
 if (!defined('APP_PATH')) exit('No direct script access allowed');
@@ -17,258 +17,133 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                 <div class="col-md-6 text-end">
                     <small class="text-muted">
                         Versión 1.0.0 | 
-                        <a href="#" class="text-decoration-none">Documentación</a> | 
-                        <a href="#" class="text-decoration-none">Soporte</a>
+                        <a href="<?= isset($base_url) ? $base_url : '' ?>/documentacion" class="text-decoration-none">Documentación</a> | 
+                        <a href="<?= isset($base_url) ? $base_url : '' ?>/soporte" class="text-decoration-none">Soporte</a>
                     </small>
                 </div>
             </div>
         </div>
     </footer>
     
-    <!-- jQuery (Opcional, para DataTables) -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- jQuery (Para DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     
-    <!-- DataTables JS (Opcional) -->
+    <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     
     <!-- Chart.js (Opcional para gráficos) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
+    <!-- MODO NOCTURNO - Código inline para garantizar funcionamiento -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Esperar a que el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const html = document.documentElement;
+            
+            // Función para actualizar el icono
+            function updateThemeIcon(theme) {
+                if (themeIcon) {
+                    if (theme === 'dark') {
+                        themeIcon.className = 'bi bi-sun-fill';
+                        if (themeToggle) themeToggle.title = 'Modo claro';
+                    } else {
+                        themeIcon.className = 'bi bi-moon-stars-fill';
+                        if (themeToggle) themeToggle.title = 'Modo oscuro';
+                    }
+                }
+            }
+            
+            // Cargar tema guardado
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            html.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+            
+            console.log('🌙 Tema cargado:', savedTheme);
+            
+            // Event listener para el botón
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const currentTheme = html.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                    
+                    // Aplicar nuevo tema
+                    html.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    
+                    // Actualizar icono
+                    updateThemeIcon(newTheme);
+                    
+                    // Transición suave
+                    document.body.style.transition = 'all 0.3s ease';
+                    
+                    console.log('✅ Tema cambiado a:', newTheme);
+                    
+                    // Mostrar mensaje (opcional)
+                    showThemeMessage(newTheme === 'dark' ? '🌙 Modo oscuro activado' : '☀️ Modo claro activado');
+                });
+                
+                console.log('✅ Botón de tema inicializado correctamente');
+            } else {
+                console.warn('⚠️ No se encontró el botón con ID "themeToggle"');
+            }
+            
+            // Función para mostrar mensaje
+            function showThemeMessage(message) {
+                let messageDiv = document.getElementById('theme-toast');
+                
+                if (!messageDiv) {
+                    messageDiv = document.createElement('div');
+                    messageDiv.id = 'theme-toast';
+                    messageDiv.style.cssText = `
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        background: var(--primary-color);
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                        z-index: 9999;
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                        font-size: 14px;
+                        font-weight: 500;
+                    `;
+                    document.body.appendChild(messageDiv);
+                }
+                
+                messageDiv.textContent = message;
+                messageDiv.style.opacity = '1';
+                
+                setTimeout(() => {
+                    messageDiv.style.opacity = '0';
+                }, 2000);
+            }
+        });
+    })();
+    </script>
+    
     <!-- Custom JS -->
     <script src="<?= isset($base_url) ? $base_url : '' ?>/public/js/admin.js"></script>
     
-    <script>
-        // ==================== MODO NOCTURNO ====================
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        const html = document.documentElement;
-        
-        // Cargar tema guardado
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', currentTheme);
-        updateThemeIcon(currentTheme);
-        
-        // Toggle tema
-        if (themeToggle) {
-            themeToggle.addEventListener('click', function() {
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
-                html.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                updateThemeIcon(newTheme);
-                
-                // Animación suave
-                document.body.style.transition = 'all 0.3s ease';
-            });
-        }
-        
-        function updateThemeIcon(theme) {
-            if (themeIcon) {
-                if (theme === 'dark') {
-                    themeIcon.className = 'bi bi-sun-fill';
-                    themeToggle.title = 'Modo claro';
-                } else {
-                    themeIcon.className = 'bi bi-moon-stars-fill';
-                    themeToggle.title = 'Modo oscuro';
-                }
-            }
-        }
-        
-        // ==================== SIDEBAR MÓVIL ====================
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebar');
-        
-        if (sidebarToggle && sidebar) {
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('show');
-            });
-            
-            // Cerrar sidebar al hacer click fuera en móvil
-            document.addEventListener('click', function(event) {
-                if (window.innerWidth <= 768) {
-                    const isClickInsideSidebar = sidebar.contains(event.target);
-                    const isClickOnToggle = sidebarToggle.contains(event.target);
-                    
-                    if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
-                        sidebar.classList.remove('show');
-                    }
-                }
-            });
-        }
-        
-        // ==================== MARCAR ENLACE ACTIVO ====================
-        const currentPath = window.location.pathname;
-        document.querySelectorAll('.nav-link').forEach(link => {
-            const linkHref = link.getAttribute('href');
-            if (linkHref && (currentPath === linkHref || currentPath.includes(linkHref))) {
-                link.classList.add('active');
-            }
-        });
-        
-        // ==================== AUTO-DISMISS ALERTS ====================
-        setTimeout(() => {
-            document.querySelectorAll('.alert').forEach(alert => {
-                if (bootstrap.Alert) {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }
-            });
-        }, 5000);
-        
-        // ==================== TOOLTIPS ====================
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-        
-        // ==================== POPOVERS ====================
-        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-        popoverTriggerList.map(function (popoverTriggerEl) {
-            return new bootstrap.Popover(popoverTriggerEl);
-        });
-        
-        // ==================== CONFIRMACIÓN DE ELIMINACIÓN ====================
-        document.querySelectorAll('[data-confirm]').forEach(element => {
-            element.addEventListener('click', function(e) {
-                const message = this.getAttribute('data-confirm') || '¿Está seguro de que desea continuar?';
-                if (!confirm(message)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return false;
-                }
-            });
-        });
-        
-        // ==================== DATATABLE INICIALIZACIÓN ====================
-        if (typeof $.fn.dataTable !== 'undefined') {
-            $('.datatable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
-                },
-                pageLength: 10,
-                order: [[0, 'desc']],
-                responsive: true
-            });
-        }
-        
-        // ==================== FORMATO DE NÚMEROS ====================
-        function formatNumber(num) {
-            return new Intl.NumberFormat('es-GT', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).format(num);
-        }
-        
-        // ==================== FORMATO DE FECHA ====================
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return new Intl.DateTimeFormat('es-GT', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            }).format(date);
-        }
-        
-        // ==================== NOTIFICACIONES TOAST ====================
-        function showToast(message, type = 'success') {
-            const toastHtml = `
-                <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                    </div>
-                </div>
-            `;
-            
-            const toastContainer = document.getElementById('toastContainer') || createToastContainer();
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            
-            const toastElement = toastContainer.lastElementChild;
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-            
-            toastElement.addEventListener('hidden.bs.toast', function() {
-                toastElement.remove();
-            });
-        }
-        
-        function createToastContainer() {
-            const container = document.createElement('div');
-            container.id = 'toastContainer';
-            container.className = 'toast-container position-fixed top-0 end-0 p-3';
-            container.style.zIndex = '9999';
-            document.body.appendChild(container);
-            return container;
-        }
-        
-        // ==================== SCROLL TO TOP ====================
-        const scrollToTopBtn = document.createElement('button');
-        scrollToTopBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
-        scrollToTopBtn.className = 'btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4';
-        scrollToTopBtn.style.display = 'none';
-        scrollToTopBtn.style.width = '50px';
-        scrollToTopBtn.style.height = '50px';
-        scrollToTopBtn.style.zIndex = '1000';
-        scrollToTopBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.body.appendChild(scrollToTopBtn);
-        
-        window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 300) {
-                scrollToTopBtn.style.display = 'block';
-            } else {
-                scrollToTopBtn.style.display = 'none';
-            }
-        });
-        
-        // ==================== LOADING SPINNER ====================
-        function showLoading() {
-            const loadingHtml = `
-                <div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.5); z-index: 9999;">
-                    <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
-                        <span class="visually-hidden">Cargando...</span>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', loadingHtml);
-        }
-        
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.remove();
-            }
-        }
-        
-        // ==================== ATAJOS DE TECLADO ====================
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + K para buscar
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                const searchInput = document.querySelector('input[type="search"], input[name="search"]');
-                if (searchInput) {
-                    searchInput.focus();
-                }
-            }
-            
-            // Ctrl/Cmd + N para nuevo registro (si existe el botón)
-            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                const newButton = document.querySelector('[href*="/crear"], [href*="/nuevo"]');
-                if (newButton) {
-                    e.preventDefault();
-                    newButton.click();
-                }
-            }
-        });
-        
-        console.log('%c🏥 MediSys v1.0.0', 'color: #0ea5e9; font-size: 20px; font-weight: bold;');
-        console.log('%cSistema de Gestión Clínica', 'color: #64748b; font-size: 14px;');
-    </script>
+    <?php if (isset($custom_js)): ?>
+        <?php foreach ($custom_js as $js): ?>
+            <script src="<?= isset($base_url) ? $base_url : '' ?>/public/js/<?= $js ?>"></script>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </body>
 </html>
