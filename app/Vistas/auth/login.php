@@ -6,10 +6,9 @@
     <title><?= htmlspecialchars($title ?? 'Login - MediSys') ?></title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= isset($base_url) ? $base_url : '' ?>/public/bootstrap5/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    
     <!-- Custom CSS -->
     <link href="<?= isset($base_url) ? $base_url : '' ?>/public/css/login.css" rel="stylesheet">
 
@@ -74,8 +73,8 @@
     </div>
     
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="<?= isset($base_url) ? $base_url : '' ?>/public/bootstrap5/js/bootstrap.bundle.min.js"></script>
+
     <script>
         // Auto-dismiss alerts
         setTimeout(() => {
