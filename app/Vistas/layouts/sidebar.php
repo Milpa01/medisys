@@ -3,7 +3,7 @@
 if (!defined('APP_PATH')) exit('No direct script access allowed');
 
 // Obtener el rol del usuario
-$rol_id = $current_user['rol_id'] ?? 0;
+$rol_id = isset($current_user['rol_id']) ? $current_user['rol_id'] : 0;
 $is_admin = ($rol_id == 1);
 $is_medico = ($rol_id == 2);
 $is_secretario = ($rol_id == 3);
@@ -42,8 +42,23 @@ $is_secretario = ($rol_id == 3);
             <a href="<?= isset($base_url) ? $base_url : '' ?>/citas" class="nav-link" data-page="citas">
                 <i class="bi bi-calendar-check-fill"></i>
                 <span>Citas</span>
-                <?php if (isset($citas_pendientes) && $citas_pendientes > 0): ?>
-                    <span class="nav-badge pulse"><?= $citas_pendientes ?></span>
+                <?php 
+                // Validar que citas_pendientes existe y es un número
+                $num_citas_pendientes = 0;
+                if (isset($citas_pendientes)) {
+                    // Si es un array, contar sus elementos
+                    if (is_array($citas_pendientes)) {
+                        $num_citas_pendientes = count($citas_pendientes);
+                    } 
+                    // Si es un número, usarlo directamente
+                    elseif (is_numeric($citas_pendientes)) {
+                        $num_citas_pendientes = (int)$citas_pendientes;
+                    }
+                }
+                
+                if ($num_citas_pendientes > 0): 
+                ?>
+                    <span class="nav-badge pulse"><?= $num_citas_pendientes ?></span>
                 <?php endif; ?>
             </a>
         </div>
@@ -83,13 +98,5 @@ $is_secretario = ($rol_id == 3);
         </div>
         
         <?php endif; ?>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <!-- Cerrar Sesión -->
-        <div class="nav-item mt-3">
-            <a href="<?= isset($base_url) ? $base_url : '' ?>/logout" class="nav-link logout">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Cerrar Sesión</span>
-            </a>
-        </div>
     </nav>
 </div>

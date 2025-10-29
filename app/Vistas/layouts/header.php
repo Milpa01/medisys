@@ -49,10 +49,6 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
         </div>
         
         <div class="d-flex align-items-center gap-3">
-            <!-- Botón de Modo Nocturno -->
-            <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
-                <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
-            </button>
             
             <!-- Notificaciones (Opcional) -->
             <?php if (isset($notifications) && count($notifications) > 0): ?>
