@@ -1,0 +1,48 @@
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Constant APP_PATH already defined in C:\xampp\htdocs\medisys\config\config.php on line 20
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 100
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 111
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 118
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 118
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 119
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Constant APP_PATH already defined in C:\xampp\htdocs\medisys\config\config.php on line 20
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Constant APP_PATH already defined in C:\xampp\htdocs\medisys\config\config.php on line 20
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 100
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 111
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 118
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 118
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 119
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 100
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 111
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 118
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 118
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 119
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Constant APP_PATH already defined in C:\xampp\htdocs\medisys\config\config.php on line 20
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Deprecated:  strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated in C:\xampp\htdocs\medisys\app\Vistas\layouts\sidebar.php on line 8
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 100
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 111
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 118
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 118
+[18-Sep-2025 11:33:07 America/Guatemala] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\medisys\app\Vistas\layouts\header.php on line 119

@@ -1,0 +1,32 @@
+.login-image {
+    background: linear-gradient(135deg, #7fb3d3 0%, #5a9fd4 100%);
+    background-size: cover;
+    height: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-image::before {
+    content: "🏥";
+    font-size: 8rem;
+    color: white;
+    opacity: 0.8;
+}
+
+.form-control-user {
+    font-size: 0.8rem;
+    border-radius: 10rem;
+    padding: 1.5rem 1rem;
+}
+
+.btn-user {
+    font-size: 0.8rem;
+    border-radius: 10rem;
+    padding: 0.75rem 1rem;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, #7fb3d3 0%, #5a9fd4 100%) !important;
+}
