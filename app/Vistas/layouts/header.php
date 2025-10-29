@@ -43,7 +43,8 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                 <i class="bi bi-list fs-4"></i>
             </button>
             <h5 class="mb-0 ms-2">
-                Bienvenido, <?= htmlspecialchars($current_user['nombre'] ?? 'Usuario') ?>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bienvenido, <?= htmlspecialchars($current_user['nombre'] ?? 'Usuario') ?>
             </h5>
         </div>
         
