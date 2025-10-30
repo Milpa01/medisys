@@ -181,8 +181,12 @@ class ConsultasControlador extends BaseControlador {
         $db = Database::getInstance();
         $medicamentos = $db->fetchAll("SELECT * FROM medicamentos WHERE is_active = 1 ORDER BY nombre_comercial");
         
+        // Obtener datos del paciente para el expediente
+        $paciente = $this->pacienteModel->find($cita['paciente_id']);
+        
         $this->data['title'] = 'Nueva Consulta';
         $this->data['cita'] = $cita;
+        $this->data['paciente'] = $paciente;
         $this->data['medicamentos'] = $medicamentos;
         
         $this->render('consultas/nueva');
@@ -209,7 +213,7 @@ class ConsultasControlador extends BaseControlador {
             'observaciones' => $this->getPost('observaciones')
         ];
         
-        // Validaciones básicas
+        // Validaciones
         $errors = [];
         
         if (empty($data['sintomas'])) {
@@ -224,25 +228,6 @@ class ConsultasControlador extends BaseControlador {
             $errors[] = 'El diagnóstico principal es requerido';
         }
         
-        if (empty($data['plan_tratamiento'])) {
-            $errors[] = 'El plan de tratamiento es requerido';
-        }
-        
-        // Validaciones de signos vitales
-        if ($data['presion_sistolica'] && $data['presion_diastolica']) {
-            if ($data['presion_sistolica'] <= $data['presion_diastolica']) {
-                $errors[] = 'La presión sistólica debe ser mayor que la diastólica';
-            }
-        }
-        
-        if ($data['temperatura'] && ($data['temperatura'] < 30 || $data['temperatura'] > 45)) {
-            $errors[] = 'La temperatura debe estar entre 30°C y 45°C';
-        }
-        
-        if ($data['proxima_cita'] && $data['proxima_cita'] <= date('Y-m-d')) {
-            $errors[] = 'La fecha de próxima cita debe ser futura';
-        }
-        
         if (!empty($errors)) {
             foreach ($errors as $error) {
                 Flash::error($error);
@@ -251,53 +236,41 @@ class ConsultasControlador extends BaseControlador {
         }
         
         try {
-            $db = Database::getInstance();
-            $db->beginTransaction();
-            
-            // Crear consulta
+            // Crear la consulta
             $consultaId = $this->consultaModel->create($data);
             
             if ($consultaId) {
-                // Cambiar estado de la cita a "completada"
-                $this->citaModel->cambiarEstado($citaId, 'completada');
+                // *** ACTUALIZAR EXPEDIENTE DEL PACIENTE ***
+                $this->actualizarExpediente($citaId, $data);
                 
                 // Procesar prescripciones si existen
                 $medicamentos = $this->getPost('medicamentos', []);
-                $dosis = $this->getPost('dosis', []);
-                $frecuencias = $this->getPost('frecuencias', []);
-                $duraciones = $this->getPost('duraciones', []);
-                $vias = $this->getPost('vias', []);
-                $cantidades = $this->getPost('cantidades', []);
-                $indicaciones_esp = $this->getPost('indicaciones_especiales', []);
-                
-                for ($i = 0; $i < count($medicamentos); $i++) {
-                    if (!empty($medicamentos[$i]) && !empty($dosis[$i]) && !empty($frecuencias[$i])) {
-                        $prescripcionData = [
-                            'consulta_id' => $consultaId,
-                            'medicamento_id' => $medicamentos[$i],
-                            'dosis' => $dosis[$i],
-                            'frecuencia' => $frecuencias[$i],
-                            'duracion' => $duraciones[$i] ?? '',
-                            'via_administracion' => $vias[$i] ?? 'oral',
-                            'cantidad_recetada' => $cantidades[$i] ?? null,
-                            'indicaciones_especiales' => $indicaciones_esp[$i] ?? null
-                        ];
-                        
-                        $this->crearPrescripcion($prescripcionData);
+                if (!empty($medicamentos)) {
+                    foreach ($medicamentos as $med) {
+                        if (!empty($med['medicamento_id'])) {
+                            $prescripcionData = [
+                                'consulta_id' => $consultaId,
+                                'medicamento_id' => $med['medicamento_id'],
+                                'dosis' => $med['dosis'] ?? '',
+                                'frecuencia' => $med['frecuencia'] ?? '',
+                                'duracion' => $med['duracion'] ?? '',
+                                'via_administracion' => $med['via_administracion'] ?? 'oral',
+                                'cantidad_recetada' => $med['cantidad_recetada'] ?? null,
+                                'indicaciones_especiales' => $med['indicaciones_especiales'] ?? ''
+                            ];
+                            $this->crearPrescripcion($prescripcionData);
+                        }
                     }
                 }
                 
-                $db->commit();
-                Flash::success('Consulta guardada exitosamente');
+                Flash::success('Consulta registrada exitosamente');
                 $this->redirect('consultas/ver?id=' . $consultaId);
             } else {
-                $db->rollback();
-                Flash::error('Error al guardar la consulta');
+                Flash::error('Error al registrar la consulta');
                 $this->redirect('consultas/nueva?cita_id=' . $citaId);
             }
         } catch (Exception $e) {
-            $db->rollback();
-            Flash::error('Error al guardar la consulta: ' . $e->getMessage());
+            Flash::error('Error al registrar la consulta: ' . $e->getMessage());
             $this->redirect('consultas/nueva?cita_id=' . $citaId);
         }
     }
@@ -327,13 +300,9 @@ class ConsultasControlador extends BaseControlador {
         // Obtener prescripciones
         $prescripciones = $this->consultaModel->getPrescripciones($id);
         
-        // Obtener historial del paciente
-        $historial = $this->pacienteModel->getHistorialMedico($consulta['paciente_id']);
-        
         $this->data['title'] = 'Consulta ' . $consulta['numero_consulta'];
         $this->data['consulta'] = $consulta;
         $this->data['prescripciones'] = $prescripciones;
-        $this->data['historial'] = $historial;
         
         $this->render('consultas/ver');
     }
@@ -427,6 +396,12 @@ class ConsultasControlador extends BaseControlador {
         try {
             $result = $this->consultaModel->update($id, $data);
             if ($result) {
+                // *** ACTUALIZAR EXPEDIENTE DEL PACIENTE ***
+                $consulta = $this->consultaModel->find($id);
+                if ($consulta && !empty($consulta['cita_id'])) {
+                    $this->actualizarExpediente($consulta['cita_id'], $data);
+                }
+                
                 Flash::success('Consulta actualizada exitosamente');
                 $this->redirect('consultas/ver?id=' . $id);
             } else {
@@ -436,6 +411,80 @@ class ConsultasControlador extends BaseControlador {
         } catch (Exception $e) {
             Flash::error('Error al actualizar la consulta: ' . $e->getMessage());
             $this->redirect('consultas/editar?id=' . $id);
+        }
+    }
+    
+    /**
+     * *** NUEVO MÉTODO: Actualizar expediente del paciente ***
+     * Este método actualiza el expediente médico del paciente con información relevante de la consulta
+     */
+    private function actualizarExpediente($citaId, $datosConsulta) {
+        try {
+            // Obtener información de la cita y paciente
+            $cita = $this->citaModel->find($citaId);
+            if (!$cita) {
+                return false;
+            }
+            
+            $pacienteId = $cita['paciente_id'];
+            $db = Database::getInstance();
+            
+            // Verificar si existe el expediente
+            $expediente = $db->fetch("SELECT * FROM expedientes WHERE paciente_id = ?", [$pacienteId]);
+            
+            if (!$expediente) {
+                // Crear expediente si no existe
+                $this->pacienteModel->createExpediente($pacienteId);
+                $expediente = $db->fetch("SELECT * FROM expedientes WHERE paciente_id = ?", [$pacienteId]);
+            }
+            
+            // Preparar datos para actualizar el expediente
+            $expedienteData = [];
+            
+            // Actualizar alergias si se especificaron en la consulta
+            if (!empty($datosConsulta['alergias_nuevas'])) {
+                $alergiasActuales = $expediente['alergias'] ?? '';
+                $expedienteData['alergias'] = $alergiasActuales ? 
+                    $alergiasActuales . "\n" . $datosConsulta['alergias_nuevas'] : 
+                    $datosConsulta['alergias_nuevas'];
+            }
+            
+            // Actualizar enfermedades crónicas si hay nuevos diagnósticos importantes
+            if (!empty($datosConsulta['diagnostico_principal']) && 
+                (stripos($datosConsulta['diagnostico_principal'], 'crónico') !== false ||
+                 stripos($datosConsulta['diagnostico_principal'], 'permanente') !== false)) {
+                $enfermedadesActuales = $expediente['enfermedades_cronicas'] ?? '';
+                $expedienteData['enfermedades_cronicas'] = $enfermedadesActuales ? 
+                    $enfermedadesActuales . "\n- " . $datosConsulta['diagnostico_principal'] : 
+                    "- " . $datosConsulta['diagnostico_principal'];
+            }
+            
+            // Actualizar última consulta
+            $expedienteData['ultima_consulta'] = date('Y-m-d');
+            $expedienteData['ultima_actualizacion_medica'] = date('Y-m-d H:i:s');
+            
+            // Si hay datos para actualizar, ejecutar el UPDATE
+            if (!empty($expedienteData)) {
+                $setClauses = [];
+                $params = [];
+                
+                foreach ($expedienteData as $campo => $valor) {
+                    $setClauses[] = "$campo = ?";
+                    $params[] = $valor;
+                }
+                
+                $params[] = $expediente['id'];
+                
+                $sql = "UPDATE expedientes SET " . implode(', ', $setClauses) . " WHERE id = ?";
+                $db->execute($sql, $params);
+                
+                return true;
+            }
+            
+        } catch (Exception $e) {
+            // Log error pero no interrumpir el flujo
+            error_log("Error actualizando expediente: " . $e->getMessage());
+            return false;
         }
     }
     
@@ -534,3 +583,4 @@ class ConsultasControlador extends BaseControlador {
         $this->redirect('consultas');
     }
 }
+?>

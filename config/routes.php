@@ -61,6 +61,7 @@ return [
     'citas/calendario' => ['controller' => 'CitasControlador', 'method' => 'calendario'],
     'citas/agenda' => ['controller' => 'CitasControlador', 'method' => 'agenda'],
     'citas/cambiarEstado' => ['controller' => 'CitasControlador', 'method' => 'cambiarEstado'],
+    'citas/finalizar' => ['controller' => 'CitasControlador', 'method' => 'finalizar'],
     
     // AJAX para citas
     'citas/horarios-disponibles' => ['controller' => 'CitasControlador', 'method' => 'obtenerHorariosDisponibles'],

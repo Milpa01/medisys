@@ -204,19 +204,19 @@ class CitasControlador extends BaseControlador {
             }
         }
         
+        // Verificar si existe una consulta asociada
+        $db = Database::getInstance();
+        $consulta = $db->fetch("SELECT id FROM consultas WHERE cita_id = ?", [$id]);
+        
         $this->data['title'] = 'Cita ' . $cita['codigo_cita'];
         $this->data['cita'] = $cita;
+        $this->data['tiene_consulta'] = !empty($consulta);
+        $this->data['consulta_id'] = $consulta['id'] ?? null;
         
         $this->render('citas/ver');
     }
     
     public function editar() {
-        // Solo secretarios y administradores pueden editar citas
-        if (!Auth::hasRole('administrador') && !Auth::hasRole('secretario')) {
-            Flash::error('No tienes permisos para editar citas');
-            $this->redirect('citas');
-        }
-        
         $id = $this->getGet('id');
         if (!$id) {
             Flash::error('ID de cita no válido');
@@ -233,10 +233,23 @@ class CitasControlador extends BaseControlador {
             $this->redirect('citas');
         }
         
-        // No permitir editar citas completadas o canceladas
-        if (in_array($cita['estado'], ['completada', 'cancelada'])) {
-            Flash::error('No se puede editar una cita ' . $cita['estado']);
-            $this->redirect('citas/ver?id=' . $id);
+        // *** CAMBIO IMPORTANTE: Ahora los médicos pueden editar sus citas ***
+        // Verificar permisos según el rol
+        if (Auth::hasRole('medico')) {
+            $medicoInfo = $this->medicoModel->findByUsuario(Auth::id());
+            if (!$medicoInfo || $cita['medico_id'] != $medicoInfo['id']) {
+                Flash::error('No tienes permisos para editar esta cita');
+                $this->redirect('citas');
+            }
+            
+            // Los médicos no pueden editar citas completadas o canceladas
+            if (in_array($cita['estado'], ['completada', 'cancelada'])) {
+                Flash::error('No se puede editar una cita ' . $cita['estado']);
+                $this->redirect('citas/ver?id=' . $id);
+            }
+        } elseif (!Auth::hasRole('administrador') && !Auth::hasRole('secretario')) {
+            Flash::error('No tienes permisos para editar citas');
+            $this->redirect('citas');
         }
         
         // Obtener pacientes y médicos
@@ -318,6 +331,57 @@ class CitasControlador extends BaseControlador {
             }
         } catch (Exception $e) {
             Flash::error('Error: ' . $e->getMessage());
+        }
+        
+        $this->redirect('citas/ver?id=' . $id);
+    }
+    
+    /**
+     * *** NUEVO MÉTODO: Finalizar una cita ***
+     * Cambia el estado de "en_curso" a "completada"
+     */
+    public function finalizar() {
+        $id = $this->getGet('id');
+        
+        if (!$id) {
+            Flash::error('ID de cita no válido');
+            $this->redirect('citas');
+        }
+        
+        // Verificar que la cita existe
+        $cita = $this->citaModel->find($id);
+        if (!$cita) {
+            Flash::error('Cita no encontrada');
+            $this->redirect('citas');
+        }
+        
+        // Verificar permisos
+        if (Auth::hasRole('medico')) {
+            $medicoInfo = $this->medicoModel->findByUsuario(Auth::id());
+            if (!$medicoInfo || $cita['medico_id'] != $medicoInfo['id']) {
+                Flash::error('No tienes permisos para finalizar esta cita');
+                $this->redirect('citas');
+            }
+        } elseif (!Auth::hasRole('administrador')) {
+            Flash::error('No tienes permisos para finalizar citas');
+            $this->redirect('citas');
+        }
+        
+        // Verificar que la cita esté en estado "en_curso"
+        if ($cita['estado'] !== 'en_curso') {
+            Flash::error('Solo se pueden finalizar citas que estén en curso');
+            $this->redirect('citas/ver?id=' . $id);
+        }
+        
+        try {
+            $result = $this->citaModel->cambiarEstado($id, 'completada');
+            if ($result) {
+                Flash::success('Cita finalizada exitosamente');
+            } else {
+                Flash::error('Error al finalizar la cita');
+            }
+        } catch (Exception $e) {
+            Flash::error('Error al finalizar la cita: ' . $e->getMessage());
         }
         
         $this->redirect('citas/ver?id=' . $id);
