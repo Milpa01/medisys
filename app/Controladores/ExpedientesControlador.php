@@ -1,10 +1,13 @@
 <?php
+
 require_once APP_PATH . '/Modelos/Expediente.php';
 require_once APP_PATH . '/Modelos/Paciente.php';
+require_once APP_PATH . '/Modelos/ExpedienteArchivo.php';
 
 class ExpedientesControlador extends BaseControlador {
     private $expedienteModel;
     private $pacienteModel;
+    private $archivoModel;
     
     public function __construct() {
         parent::__construct();
@@ -12,6 +15,7 @@ class ExpedientesControlador extends BaseControlador {
         
         $this->expedienteModel = new Expediente();
         $this->pacienteModel = new Paciente();
+        $this->archivoModel = new ExpedienteArchivo();
     }
     
     /**
@@ -71,11 +75,17 @@ class ExpedientesControlador extends BaseControlador {
         // Obtener citas próximas
         $citasProximas = $this->expedienteModel->getCitasProximas($id);
         
+        // Obtener archivos adjuntos
+        $archivos = $this->archivoModel->getByExpediente($id);
+        $statsArchivos = $this->archivoModel->getEstadisticas($id);
+        
         $this->data['title'] = 'Expediente: ' . $expediente['nombre'] . ' ' . $expediente['apellidos'];
         $this->data['expediente'] = $expediente;
         $this->data['historial_consultas'] = $historialConsultas;
         $this->data['prescripciones'] = $prescripciones;
         $this->data['citas_proximas'] = $citasProximas;
+        $this->data['archivos'] = $archivos;
+        $this->data['stats_archivos'] = $statsArchivos;
         
         $this->render('expedientes/ver');
     }
@@ -107,7 +117,7 @@ class ExpedientesControlador extends BaseControlador {
     }
     
     /**
-     * Actualizar expediente
+     * Actualizar expediente - VALIDACIÓN DE ALTURA CORREGIDA
      */
     public function actualizar() {
         $id = $this->getPost('id');
@@ -128,13 +138,15 @@ class ExpedientesControlador extends BaseControlador {
             'observaciones_generales' => $this->getPost('observaciones_generales')
         ];
         
-        // Validaciones
+        // Validaciones CORREGIDAS
         $errors = [];
         
+        // Validación de peso (0 a 500 kg)
         if ($data['peso_actual'] && ($data['peso_actual'] < 0 || $data['peso_actual'] > 500)) {
             $errors[] = 'El peso debe estar entre 0 y 500 kg';
         }
         
+        // Validación de altura CORREGIDA (0 a 300 cm, antes estaba limitado a 99.99)
         if ($data['altura_actual'] && ($data['altura_actual'] < 0 || $data['altura_actual'] > 300)) {
             $errors[] = 'La altura debe estar entre 0 y 300 cm';
         }
@@ -234,6 +246,117 @@ class ExpedientesControlador extends BaseControlador {
     }
     
     /**
+     * NUEVA FUNCIÓN: Subir archivo adjunto
+     */
+    public function subirArchivo() {
+        if (!$this->isPost()) {
+            Flash::error('Método no permitido');
+            $this->redirect('expedientes');
+        }
+        
+        $expediente_id = $this->getPost('expediente_id');
+        $tipo_documento = $this->getPost('tipo_documento');
+        $descripcion = $this->getPost('descripcion');
+        
+        if (!$expediente_id) {
+            Flash::error('ID de expediente no válido');
+            $this->redirect('expedientes');
+        }
+        
+        // Verificar que el expediente existe
+        $expediente = $this->expedienteModel->find($expediente_id);
+        if (!$expediente) {
+            Flash::error('Expediente no encontrado');
+            $this->redirect('expedientes');
+        }
+        
+        // Verificar que se subió un archivo
+        if (!isset($_FILES['archivo']) || $_FILES['archivo']['error'] === UPLOAD_ERR_NO_FILE) {
+            Flash::error('Debe seleccionar un archivo');
+            $this->redirect('expedientes/ver?id=' . $expediente_id);
+        }
+        
+        // Subir archivo
+        $resultado = $this->archivoModel->subirArchivo(
+            $_FILES['archivo'],
+            $expediente_id,
+            $tipo_documento,
+            $descripcion,
+            Auth::getUserId()
+        );
+        
+        if ($resultado['success']) {
+            Flash::success('Archivo subido exitosamente');
+        } else {
+            foreach ($resultado['errors'] as $error) {
+                Flash::error($error);
+            }
+        }
+        
+        $this->redirect('expedientes/ver?id=' . $expediente_id);
+    }
+    
+    /**
+     * NUEVA FUNCIÓN: Eliminar archivo adjunto
+     */
+    public function eliminarArchivo() {
+        $id = $this->getGet('id');
+        $expediente_id = $this->getGet('expediente_id');
+        
+        if (!$id || !$expediente_id) {
+            Flash::error('Parámetros no válidos');
+            $this->redirect('expedientes');
+        }
+        
+        $resultado = $this->archivoModel->eliminarArchivo($id);
+        
+        if ($resultado['success']) {
+            Flash::success('Archivo eliminado exitosamente');
+        } else {
+            Flash::error($resultado['error'] ?? 'Error al eliminar el archivo');
+        }
+        
+        $this->redirect('expedientes/ver?id=' . $expediente_id);
+    }
+    
+    /**
+     * NUEVA FUNCIÓN: Descargar archivo adjunto
+     */
+    public function descargarArchivo() {
+        $id = $this->getGet('id');
+        
+        if (!$id) {
+            Flash::error('ID de archivo no válido');
+            $this->redirect('expedientes');
+        }
+        
+        $archivo = $this->archivoModel->find($id);
+        if (!$archivo) {
+            Flash::error('Archivo no encontrado');
+            $this->redirect('expedientes');
+        }
+        
+        $rutaCompleta = ROOT_PATH . '/public' . $archivo['ruta_archivo'];
+        
+        if (!file_exists($rutaCompleta)) {
+            Flash::error('El archivo físico no existe');
+            $this->redirect('expedientes/ver?id=' . $archivo['expediente_id']);
+        }
+        
+        // Forzar descarga
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $archivo['nombre_original'] . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($rutaCompleta));
+        
+        readfile($rutaCompleta);
+        exit;
+    }
+    
+    /**
      * Buscar expediente por paciente (AJAX)
      */
     public function buscarPorPaciente() {
@@ -290,4 +413,3 @@ class ExpedientesControlador extends BaseControlador {
         $this->render('expedientes/ver');
     }
 }
-?>

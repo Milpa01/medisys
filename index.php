@@ -3,8 +3,6 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// NO iniciar sesión aquí, se hace en App.php
-
 // Definir constantes del sistema
 define('BASE_PATH', __DIR__);
 define('APP_PATH', BASE_PATH . '/app');

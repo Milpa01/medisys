@@ -1,0 +1,95 @@
+# Prevenir listado de directorio
+Options -Indexes
+
+# Denegar acceso a archivos PHP ejecutables
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Prevenir ejecución de scripts
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# Denegar todo por defecto
+Order Deny,Allow
+Deny from all
+
+# Permitir solo tipos de archivo seguros
+<FilesMatch "\.(pdf|jpg|jpeg|png|gif|doc|docx|xls|xlsx|ppt|pptx)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+<IfModule mod_mime.c>
+    # Documentos
+    AddType application/pdf .pdf
+    
+    # Imágenes
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType image/gif .gif
+    
+    # Microsoft Office
+    AddType application/msword .doc
+    AddType application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx
+    AddType application/vnd.ms-excel .xls
+    AddType application/vnd.openxmlformats-officedocument.spreadsheetml.sheet .xlsx
+    AddType application/vnd.ms-powerpoint .ppt
+    AddType application/vnd.openxmlformats-officedocument.presentationml.presentation .pptx
+</IfModule>
+
+# Prevenir acceso a archivos ocultos
+<FilesMatch "^\.">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Proteger archivos .htaccess
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# ========================================
+# CACHÉ PARA ARCHIVOS ESTÁTICOS
+# ========================================
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Documentos PDF no cachear (pueden actualizarse)
+    ExpiresByType application/pdf "access plus 0 seconds"
+    
+    # Imágenes cachear por menos tiempo
+    ExpiresByType image/jpeg "access plus 1 week"
+    ExpiresByType image/png "access plus 1 week"
+    ExpiresByType image/gif "access plus 1 week"
+    
+    # Documentos Office no cachear
+    ExpiresByType application/msword "access plus 0 seconds"
+    ExpiresByType application/vnd.openxmlformats-officedocument.wordprocessingml.document "access plus 0 seconds"
+    ExpiresByType application/vnd.ms-excel "access plus 0 seconds"
+    ExpiresByType application/vnd.openxmlformats-officedocument.spreadsheetml.sheet "access plus 0 seconds"
+</IfModule>
+
+# ========================================
+# HEADERS DE SEGURIDAD
+# ========================================
+
+<IfModule mod_headers.c>
+    # Prevenir que archivos sean ejecutados como HTML
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Control de descarga (forzar descarga en lugar de mostrar en navegador)
+    # Descomentar si quieres forzar descarga siempre
+    # Header set Content-Disposition "attachment"
+</IfModule>
+
+# Limitar tamaño de solicitud (10MB)
+LimitRequestBody 10485760
