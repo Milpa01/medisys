@@ -15,8 +15,7 @@ if (!defined('APP_PATH')) exit('No direct script access allowed');
                 <div class="col-md-6 text-end">
                     <small class="text-muted">
                         Versión 1.0.0 | 
-                        <a href="<?= isset($base_url) ? $base_url : '' ?>/documentacion" class="text-decoration-none">Documentación</a> | 
-                        <a href="<?= isset($base_url) ? $base_url : '' ?>/soporte" class="text-decoration-none">Soporte</a>
+                        <a href="https://drive.google.com/drive/folders/1C9H6Y4Zdy9WocizqstwZNj8dLjjzYV4i?usp=drive_link" class="text-decoration-none" target="_blank">Manuales</a>
                     </small>
                 </div>
             </div>
