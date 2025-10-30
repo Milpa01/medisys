@@ -146,14 +146,10 @@
                                     <strong class="text-primary">
                                         <?= htmlspecialchars($cita['codigo_cita'] ?? 'N/A') ?>
                                     </strong>
-                                    <br>
-                                    <small class="text-muted">
-                                        <?= ucfirst($cita['tipo_cita'] ?? 'primera_vez') ?>
-                                    </small>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                        <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
                                             <i class="bi bi-person-fill"></i>
                                         </div>
                                         <div>
@@ -187,17 +183,28 @@
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <strong><?= Util::formatDate($cita['fecha_cita'] ?? '') ?></strong>
+                                    <strong>
+                                        <?php
+                                        if (!empty($cita['fecha_cita'])) {
+                                            $fecha = new DateTime($cita['fecha_cita']);
+                                            echo $fecha->format('d/m/Y');
+                                        } else {
+                                            echo 'N/A';
+                                        }
+                                        ?>
+                                    </strong>
                                     <br>
                                     <span class="text-primary">
                                         <i class="bi bi-clock me-1"></i>
-                                        <?= Util::formatTime($cita['hora_cita'] ?? '') ?>
+                                        <?php
+                                        if (!empty($cita['hora_cita'])) {
+                                            $hora = new DateTime($cita['hora_cita']);
+                                            echo $hora->format('H:i');
+                                        } else {
+                                            echo 'N/A';
+                                        }
+                                        ?>
                                     </span>
-                                    <?php if (!empty($cita['duracion_minutos'])): ?>
-                                        <br><small class="text-muted">
-                                            (<?= $cita['duracion_minutos'] ?> min)
-                                        </small>
-                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <span class="text-truncate d-inline-block" style="max-width: 150px;" 

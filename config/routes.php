@@ -65,6 +65,7 @@ return [
     
     // AJAX para citas
     'citas/horarios-disponibles' => ['controller' => 'CitasControlador', 'method' => 'obtenerHorariosDisponibles'],
+    'citas/obtenerHorariosDisponibles' => ['controller' => 'CitasControlador', 'method' => 'obtenerHorariosDisponibles'],
     
     // Consultas
     'consultas' => ['controller' => 'ConsultasControlador', 'method' => 'index'],
@@ -87,4 +88,3 @@ return [
     'reportes/pacientes' => ['controller' => 'ReportesControlador', 'method' => 'pacientes'],
     'reportes/medicos' => ['controller' => 'ReportesControlador', 'method' => 'medicos'],
 ];
-?>

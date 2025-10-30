@@ -1,5 +1,6 @@
 # Habilitar motor de reescritura
 RewriteEngine On
+RewriteBase /medisys/
 
 # Redirigir todo al index.php (para MVC)
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -1,4 +1,5 @@
 <?php
+
 require_once APP_PATH . '/Modelos/Cita.php';
 require_once APP_PATH . '/Modelos/Paciente.php';
 require_once APP_PATH . '/Modelos/Medico.php';
@@ -121,9 +122,7 @@ class CitasControlador extends BaseControlador {
             'usuario_registro_id' => Auth::id(),
             'fecha_cita' => $this->getPost('fecha_cita'),
             'hora_cita' => $this->getPost('hora_cita'),
-            'duracion_minutos' => $this->getPost('duracion_minutos', 30),
             'motivo_consulta' => $this->getPost('motivo_consulta'),
-            'tipo_cita' => $this->getPost('tipo_cita', 'primera_vez'),
             'notas' => $this->getPost('notas'),
             'estado' => 'programada'
         ];
@@ -223,8 +222,10 @@ class CitasControlador extends BaseControlador {
             $this->redirect('citas');
         }
         
-        if ($this->isPost()) {
-            return $this->actualizar();
+        // Solo secretarios y administradores pueden editar
+        if (!Auth::hasRole('administrador') && !Auth::hasRole('secretario')) {
+            Flash::error('No tienes permisos para editar citas');
+            $this->redirect('citas');
         }
         
         $cita = $this->citaModel->findWithInfo($id);
@@ -233,45 +234,38 @@ class CitasControlador extends BaseControlador {
             $this->redirect('citas');
         }
         
-        // *** CAMBIO IMPORTANTE: Ahora los médicos pueden editar sus citas ***
-        // Verificar permisos según el rol
-        if (Auth::hasRole('medico')) {
-            $medicoInfo = $this->medicoModel->findByUsuario(Auth::id());
-            if (!$medicoInfo || $cita['medico_id'] != $medicoInfo['id']) {
-                Flash::error('No tienes permisos para editar esta cita');
-                $this->redirect('citas');
-            }
-            
-            // Los médicos no pueden editar citas completadas o canceladas
-            if (in_array($cita['estado'], ['completada', 'cancelada'])) {
-                Flash::error('No se puede editar una cita ' . $cita['estado']);
-                $this->redirect('citas/ver?id=' . $id);
-            }
-        } elseif (!Auth::hasRole('administrador') && !Auth::hasRole('secretario')) {
-            Flash::error('No tienes permisos para editar citas');
-            $this->redirect('citas');
+        // No permitir editar citas completadas o canceladas
+        if (in_array($cita['estado'], ['completada', 'cancelada', 'no_asistio'])) {
+            Flash::error('No se pueden editar citas ' . $cita['estado']);
+            $this->redirect('citas/ver?id=' . $id);
         }
         
-        // Obtener pacientes y médicos
-        $pacientes = $this->pacienteModel->getAllActive();
-        $medicos = $this->medicoModel->getAllWithInfo();
+        if ($this->isPost()) {
+            return $this->actualizar($id, $cita);
+        }
         
-        $this->data['title'] = 'Editar Cita';
+        // Obtener pacientes activos
+        $pacientes = $this->pacienteModel->getAllActive();
+        
+        // Obtener médicos activos
+        $medicos = $this->medicoModel->getAllWithInfo();
+        $medicosActivos = array_filter($medicos, function($medico) {
+            return $medico['usuario_activo'] && $medico['is_active'];
+        });
+        
+        $this->data['title'] = 'Editar Cita - ' . $cita['codigo_cita'];
         $this->data['cita'] = $cita;
         $this->data['pacientes'] = $pacientes;
-        $this->data['medicos'] = $medicos;
+        $this->data['medicos'] = $medicosActivos;
         
         $this->render('citas/editar');
     }
     
-    public function actualizar() {
-        $id = $this->getPost('id');
+    private function actualizar($id, $citaActual) {
         $data = [
             'fecha_cita' => $this->getPost('fecha_cita'),
             'hora_cita' => $this->getPost('hora_cita'),
-            'duracion_minutos' => $this->getPost('duracion_minutos'),
             'motivo_consulta' => $this->getPost('motivo_consulta'),
-            'tipo_cita' => $this->getPost('tipo_cita'),
             'notas' => $this->getPost('notas'),
             'estado' => $this->getPost('estado')
         ];
@@ -289,6 +283,19 @@ class CitasControlador extends BaseControlador {
         
         if (empty($data['motivo_consulta'])) {
             $errors[] = 'El motivo de consulta es requerido';
+        }
+        
+        // Verificar disponibilidad si cambió fecha u hora
+        if (($data['fecha_cita'] != $citaActual['fecha_cita'] || 
+             $data['hora_cita'] != $citaActual['hora_cita'])) {
+            if (!$this->citaModel->verificarDisponibilidad(
+                $citaActual['medico_id'], 
+                $data['fecha_cita'], 
+                $data['hora_cita'],
+                $id
+            )) {
+                $errors[] = 'El médico no está disponible en esa fecha y hora';
+            }
         }
         
         if (!empty($errors)) {
@@ -336,10 +343,6 @@ class CitasControlador extends BaseControlador {
         $this->redirect('citas/ver?id=' . $id);
     }
     
-    /**
-     * *** NUEVO MÉTODO: Finalizar una cita ***
-     * Cambia el estado de "en_curso" a "completada"
-     */
     public function finalizar() {
         $id = $this->getGet('id');
         
@@ -449,7 +452,10 @@ class CitasControlador extends BaseControlador {
         $this->render('citas/agenda');
     }
     
-    // AJAX endpoints
+    /**
+     * AJAX endpoint para obtener horarios disponibles
+     * CRÍTICO: Solo devuelve horas en punto que NO están ocupadas
+     */
     public function obtenerHorariosDisponibles() {
         header('Content-Type: application/json');
         
@@ -461,34 +467,18 @@ class CitasControlador extends BaseControlador {
             return;
         }
         
-        // Obtener horarios ocupados
-        $horariosOcupados = $this->citaModel->getHorariosOcupados($medicoId, $fecha);
+        // Usar el nuevo método del modelo que solo devuelve horas disponibles
+        $horariosDisponibles = $this->citaModel->getHorariosDisponibles($medicoId, $fecha);
         
-        // Obtener información del médico
-        $medico = $this->medicoModel->findWithInfo($medicoId);
-        
-        if (!$medico) {
-            echo json_encode(['error' => 'Médico no encontrado']);
-            return;
+        // Formatear para el select
+        $opciones = [];
+        foreach ($horariosDisponibles as $horario) {
+            $opciones[] = [
+                'valor' => $horario['hora'],
+                'texto' => $horario['hora_display']
+            ];
         }
         
-        // Generar horarios disponibles
-        $inicio = strtotime($medico['horario_inicio']);
-        $fin = strtotime($medico['horario_fin']);
-        $duracion = 30 * 60; // 30 minutos en segundos
-        
-        $horariosDisponibles = [];
-        for ($hora = $inicio; $hora < $fin; $hora += $duracion) {
-            $horaFormato = date('H:i:s', $hora);
-            if (!in_array($horaFormato, $horariosOcupados)) {
-                $horariosDisponibles[] = [
-                    'valor' => $horaFormato,
-                    'texto' => date('H:i', $hora)
-                ];
-            }
-        }
-        
-        echo json_encode($horariosDisponibles);
+        echo json_encode($opciones);
     }
 }
-?>

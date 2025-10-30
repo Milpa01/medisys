@@ -132,103 +132,81 @@
                         
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="duracion_minutos" class="form-label">Duración (minutos)</label>
-                                <select class="form-select" id="duracion_minutos" name="duracion_minutos">
-                                    <option value="30" selected>30 minutos</option>
-                                    <option value="45">45 minutos</option>
-                                    <option value="60">60 minutos</option>
-                                    <option value="90">90 minutos</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="tipo_cita" class="form-label">Tipo de Cita</label>
-                                <select class="form-select" id="tipo_cita" name="tipo_cita">
-                                    <option value="primera_vez">Primera Vez</option>
-                                    <option value="control">Control</option>
-                                    <option value="emergencia">Emergencia</option>
-                                    <option value="especializada">Especializada</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="mb-3">
                                 <label for="costo" class="form-label">Costo de la Consulta</label>
                                 <div class="input-group">
                                     <span class="input-group-text">Q</span>
-                                    <input type="number" class="form-control" id="costo" name="costo" 
-                                           min="0" step="0.01" placeholder="0.00" readonly>
+                                    <input type="number" step="0.01" class="form-control" id="costo" name="costo" 
+                                           value="0.00" readonly>
                                 </div>
                                 <div class="form-text">Se establecerá automáticamente según el médico</div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Detalles de la Consulta -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-clipboard-data me-2"></i>Detalles de la Consulta
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="motivo_consulta" class="form-label">Motivo de la Consulta <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="motivo_consulta" name="motivo_consulta" rows="3" 
-                                  placeholder="Describa brevemente el motivo de la consulta..." required></textarea>
-                        <div class="form-text">Ejemplo: Dolor de cabeza, control rutinario, seguimiento de tratamiento, etc.</div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="motivo_consulta" class="form-label">Motivo de Consulta <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="motivo_consulta" name="motivo_consulta" 
+                                       maxlength="255" required placeholder="Ejemplo: Consulta general, dolor de cabeza, chequeo rutinario...">
+                                <div class="form-text">Describa brevemente el motivo de la visita</div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="notas" class="form-label">Notas Adicionales</label>
-                        <textarea class="form-control" id="notas" name="notas" rows="2" 
-                                  placeholder="Información adicional relevante (opcional)..."></textarea>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="notas" class="form-label">Notas Adicionales</label>
+                                <textarea class="form-control" id="notas" name="notas" rows="3" 
+                                          placeholder="Observaciones adicionales para esta cita..."></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Resumen de la Cita -->
             <div class="card mb-4" id="resumen-cita" style="display: none;">
-                <div class="card-header bg-light">
+                <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-check-circle text-success me-2"></i>Resumen de la Cita
+                        <i class="bi bi-check-circle me-2"></i>Resumen de la Cita
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <p><strong>Paciente:</strong> <span id="resumen-paciente">-</span></p>
-                            <p><strong>Médico:</strong> <span id="resumen-medico">-</span></p>
-                            <p><strong>Especialidad:</strong> <span id="resumen-especialidad">-</span></p>
+                            <p><strong><i class="bi bi-person me-2"></i>Paciente:</strong> <span id="resumen-paciente">-</span></p>
+                            <p><strong><i class="bi bi-person-badge me-2"></i>Médico:</strong> <span id="resumen-medico">-</span></p>
+                            <p><strong><i class="bi bi-briefcase me-2"></i>Especialidad:</strong> <span id="resumen-especialidad">-</span></p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Fecha:</strong> <span id="resumen-fecha">-</span></p>
-                            <p><strong>Hora:</strong> <span id="resumen-hora">-</span></p>
-                            <p><strong>Costo:</strong> <span id="resumen-costo">-</span></p>
+                            <p><strong><i class="bi bi-calendar me-2"></i>Fecha:</strong> <span id="resumen-fecha">-</span></p>
+                            <p><strong><i class="bi bi-clock me-2"></i>Hora:</strong> <span id="resumen-hora">-</span></p>
+                            <p><strong><i class="bi bi-currency-exchange me-2"></i>Costo:</strong> <span id="resumen-costo">-</span></p>
                         </div>
                     </div>
-                    <p><strong>Motivo:</strong> <span id="resumen-motivo">-</span></p>
+                    <p><strong><i class="bi bi-file-text me-2"></i>Motivo:</strong> <span id="resumen-motivo">-</span></p>
                 </div>
             </div>
             
             <!-- Botones de Acción -->
-            <div class="d-flex justify-content-end gap-2 mb-4">
-                <a href="<?= Router::url('citas') ?>" class="btn btn-secondary">
-                    <i class="bi bi-x-circle me-2"></i>Cancelar
-                </a>
-                <button type="reset" class="btn btn-outline-warning" id="btn-limpiar">
-                    <i class="bi bi-arrow-clockwise me-2"></i>Limpiar Formulario
-                </button>
-                <button type="submit" class="btn btn-primary" id="btn-guardar">
-                    <i class="bi bi-calendar-plus me-2"></i>Programar Cita
-                </button>
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="button" class="btn btn-outline-secondary" id="btn-limpiar">
+                            <i class="bi bi-x-circle me-2"></i>Limpiar Formulario
+                        </button>
+                        <div>
+                            <a href="<?= Router::url('citas') ?>" class="btn btn-secondary me-2">
+                                <i class="bi bi-x-lg me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-2"></i>Programar Cita
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
@@ -242,15 +220,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const fechaCita = document.getElementById('fecha_cita');
     const horaCita = document.getElementById('hora_cita');
     const buscarPaciente = document.getElementById('buscar-paciente');
+    const costoInput = document.getElementById('costo');
     
     // Búsqueda de pacientes
     buscarPaciente.addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
         const options = pacienteSelect.querySelectorAll('option');
         
-        options.forEach(option => {
-            if (option.value === '') return;
-            
+        options.forEach((option, index) => {
+            if (index === 0) return; // Skip first option
             const text = option.textContent.toLowerCase();
             if (text.includes(searchTerm)) {
                 option.style.display = 'block';
@@ -260,14 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Limpiar búsqueda
     document.getElementById('limpiar-busqueda').addEventListener('click', function() {
         buscarPaciente.value = '';
         const options = pacienteSelect.querySelectorAll('option');
         options.forEach(option => option.style.display = 'block');
     });
     
-    // Mostrar información del paciente
+    // Mostrar información del paciente seleccionado
     pacienteSelect.addEventListener('change', function() {
         const option = this.selectedOptions[0];
         const infoPaciente = document.getElementById('info-paciente');
@@ -290,12 +267,11 @@ document.addEventListener('DOMContentLoaded', function() {
         actualizarResumen();
     });
     
-    // Mostrar información del médico
+    // Mostrar información del médico seleccionado
     medicoSelect.addEventListener('change', function() {
         const option = this.selectedOptions[0];
         const infoMedico = document.getElementById('info-medico');
         const detalles = document.getElementById('medico-detalles');
-        const costoInput = document.getElementById('costo');
         
         if (this.value) {
             const especialidad = option.getAttribute('data-especialidad');
@@ -325,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Actualizar horarios cuando cambie la fecha
     fechaCita.addEventListener('change', actualizarHorarios);
     
-    // Función para actualizar horarios disponibles
+    // Función para actualizar horarios disponibles mediante AJAX
     function actualizarHorarios() {
         const medicoId = medicoSelect.value;
         const fecha = fechaCita.value;
@@ -339,36 +315,42 @@ document.addEventListener('DOMContentLoaded', function() {
         
         horaCita.innerHTML = '<option value="">Cargando horarios...</option>';
         horaCita.disabled = true;
+        document.getElementById('horarios-info').innerHTML = '<i class="bi bi-hourglass-split text-warning me-1"></i>Cargando horarios disponibles...';
         
-        // Simular carga de horarios (en la implementación real, esto sería una llamada AJAX)
-        setTimeout(() => {
-            // Horarios de ejemplo - en la implementación real esto vendría del servidor
-            const horariosEjemplo = [
-                { valor: '08:00:00', texto: '8:00 AM' },
-                { valor: '08:30:00', texto: '8:30 AM' },
-                { valor: '09:00:00', texto: '9:00 AM' },
-                { valor: '09:30:00', texto: '9:30 AM' },
-                { valor: '10:00:00', texto: '10:00 AM' },
-                { valor: '10:30:00', texto: '10:30 AM' },
-                { valor: '11:00:00', texto: '11:00 AM' },
-                { valor: '14:00:00', texto: '2:00 PM' },
-                { valor: '14:30:00', texto: '2:30 PM' },
-                { valor: '15:00:00', texto: '3:00 PM' },
-                { valor: '15:30:00', texto: '3:30 PM' },
-                { valor: '16:00:00', texto: '4:00 PM' }
-            ];
-            
-            horaCita.innerHTML = '<option value="">Seleccionar hora...</option>';
-            horariosEjemplo.forEach(horario => {
-                const option = document.createElement('option');
-                option.value = horario.valor;
-                option.textContent = horario.texto;
-                horaCita.appendChild(option);
+        // Llamada AJAX para obtener horarios disponibles
+        fetch(`<?= Router::url('citas/obtenerHorariosDisponibles') ?>?medico_id=${medicoId}&fecha=${fecha}`)
+            .then(response => response.json())
+            .then(data => {
+                horaCita.innerHTML = '<option value="">Seleccionar hora...</option>';
+                
+                if (data.error) {
+                    document.getElementById('horarios-info').innerHTML = '<i class="bi bi-exclamation-triangle text-danger me-1"></i>' + data.error;
+                    horaCita.disabled = true;
+                    return;
+                }
+                
+                if (data.length === 0) {
+                    horaCita.innerHTML = '<option value="">No hay horarios disponibles</option>';
+                    document.getElementById('horarios-info').innerHTML = '<i class="bi bi-x-circle text-danger me-1"></i>No hay horarios disponibles para esta fecha';
+                    horaCita.disabled = true;
+                } else {
+                    data.forEach(horario => {
+                        const option = document.createElement('option');
+                        option.value = horario.valor;
+                        option.textContent = horario.texto;
+                        horaCita.appendChild(option);
+                    });
+                    
+                    horaCita.disabled = false;
+                    document.getElementById('horarios-info').innerHTML = `<i class="bi bi-check-circle text-success me-1"></i>${data.length} horarios disponibles`;
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar horarios:', error);
+                horaCita.innerHTML = '<option value="">Error al cargar horarios</option>';
+                document.getElementById('horarios-info').innerHTML = '<i class="bi bi-x-circle text-danger me-1"></i>Error al cargar horarios';
+                horaCita.disabled = true;
             });
-            
-            horaCita.disabled = false;
-            document.getElementById('horarios-info').innerHTML = '<i class="bi bi-check-circle text-success me-1"></i>Horarios disponibles cargados';
-        }, 1000);
     }
     
     // Actualizar resumen cuando cambien los campos
@@ -390,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('resumen-paciente').textContent = pacienteNombre;
         document.getElementById('resumen-medico').textContent = medicoNombre;
         document.getElementById('resumen-especialidad').textContent = especialidad;
-        document.getElementById('resumen-fecha').textContent = fecha ? new Date(fecha).toLocaleDateString('es-ES') : '-';
+        document.getElementById('resumen-fecha').textContent = fecha ? new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }) : '-';
         document.getElementById('resumen-hora').textContent = hora;
         document.getElementById('resumen-costo').textContent = costo ? `Q ${parseFloat(costo).toFixed(2)}` : '-';
         document.getElementById('resumen-motivo').textContent = motivo;
@@ -430,14 +412,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Limpiar formulario
     document.getElementById('btn-limpiar').addEventListener('click', function() {
-        document.getElementById('info-paciente').style.display = 'none';
-        document.getElementById('info-medico').style.display = 'none';
-        document.getElementById('resumen-cita').style.display = 'none';
-        horaCita.disabled = true;
-        horaCita.innerHTML = '<option value="">Primero seleccione médico y fecha</option>';
-        buscarPaciente.value = '';
-        const options = pacienteSelect.querySelectorAll('option');
-        options.forEach(option => option.style.display = 'block');
+        if (confirm('¿Está seguro de limpiar todo el formulario?')) {
+            formCita.reset();
+            document.getElementById('info-paciente').style.display = 'none';
+            document.getElementById('info-medico').style.display = 'none';
+            document.getElementById('resumen-cita').style.display = 'none';
+            horaCita.disabled = true;
+            horaCita.innerHTML = '<option value="">Primero seleccione médico y fecha</option>';
+            buscarPaciente.value = '';
+            const options = pacienteSelect.querySelectorAll('option');
+            options.forEach(option => option.style.display = 'block');
+        }
     });
 });
 </script>

@@ -1,13 +1,17 @@
 <?php
+
 class Cita extends BaseModelo {
     protected $table = 'citas';
     
     protected $fillable = [
         'codigo_cita', 'paciente_id', 'medico_id', 'usuario_registro_id',
-        'fecha_cita', 'hora_cita', 'duracion_minutos', 'motivo_consulta',
-        'notas', 'estado', 'tipo_cita', 'costo', 'observaciones'
+        'fecha_cita', 'hora_cita', 'motivo_consulta',
+        'notas', 'estado', 'costo', 'observaciones'
     ];
     
+    /**
+     * Obtener todas las citas con información completa
+     */
     public function getAllWithInfo() {
         $sql = "SELECT c.*, 
                        CONCAT(p.nombre, ' ', p.apellidos) as paciente_nombre,
@@ -28,6 +32,9 @@ class Cita extends BaseModelo {
         return $this->db->fetchAll($sql);
     }
     
+    /**
+     * Buscar cita por ID con información completa
+     */
     public function findWithInfo($id) {
         $sql = "SELECT c.*, 
                        CONCAT(p.nombre, ' ', p.apellidos) as paciente_nombre,
@@ -50,6 +57,9 @@ class Cita extends BaseModelo {
         return $this->db->fetch($sql, [$id]);
     }
     
+    /**
+     * Obtener citas del día especificado
+     */
     public function getCitasDelDia($fecha = null) {
         $fecha = $fecha ?: date('Y-m-d');
         
@@ -70,6 +80,9 @@ class Cita extends BaseModelo {
         return $this->db->fetchAll($sql, [$fecha]);
     }
     
+    /**
+     * Obtener citas por médico en un rango de fechas
+     */
     public function getCitasPorMedico($medicoId, $fechaInicio = null, $fechaFin = null) {
         $fechaInicio = $fechaInicio ?: date('Y-m-d');
         $fechaFin = $fechaFin ?: date('Y-m-d', strtotime('+30 days'));
@@ -87,6 +100,9 @@ class Cita extends BaseModelo {
         return $this->db->fetchAll($sql, [$medicoId, $fechaInicio, $fechaFin]);
     }
     
+    /**
+     * Verificar si una hora está disponible para un médico en una fecha específica
+     */
     public function verificarDisponibilidad($medicoId, $fecha, $hora, $excludeId = null) {
         $sql = "SELECT COUNT(*) as count FROM citas 
                 WHERE medico_id = ? AND fecha_cita = ? AND hora_cita = ? 
@@ -102,6 +118,10 @@ class Cita extends BaseModelo {
         return $result['count'] == 0;
     }
     
+    /**
+     * Obtener horarios ocupados para un médico en una fecha específica
+     * Devuelve array de horas en formato HH:00:00
+     */
     public function getHorariosOcupados($medicoId, $fecha) {
         $sql = "SELECT hora_cita FROM citas 
                 WHERE medico_id = ? AND fecha_cita = ? 
@@ -111,6 +131,69 @@ class Cita extends BaseModelo {
         return array_column($result, 'hora_cita');
     }
     
+    /**
+     * Generar horarios disponibles para un médico en una fecha específica
+     * SOLO HORAS EN PUNTO (8:00, 9:00, 10:00, etc.)
+     * Elimina automáticamente las horas ya ocupadas
+     */
+    public function getHorariosDisponibles($medicoId, $fecha) {
+        // Obtener información del médico
+        $medico = $this->db->fetch(
+            "SELECT horario_inicio, horario_fin, dias_atencion FROM medicos WHERE id = ?",
+            [$medicoId]
+        );
+        
+        if (!$medico) {
+            return [];
+        }
+        
+        // Verificar si el médico atiende ese día
+        $diaSemana = strtolower(date('l', strtotime($fecha)));
+        $diasEspanol = [
+            'monday' => 'lunes',
+            'tuesday' => 'martes', 
+            'wednesday' => 'miercoles',
+            'thursday' => 'jueves',
+            'friday' => 'viernes',
+            'saturday' => 'sabado',
+            'sunday' => 'domingo'
+        ];
+        
+        $diaActual = $diasEspanol[$diaSemana];
+        $diasAtencion = explode(',', $medico['dias_atencion']);
+        
+        if (!in_array($diaActual, $diasAtencion)) {
+            return [];
+        }
+        
+        // Obtener horas ocupadas
+        $horasOcupadas = $this->getHorariosOcupados($medicoId, $fecha);
+        
+        // Generar horarios en punto desde horario_inicio hasta horario_fin
+        $horaInicio = (int)substr($medico['horario_inicio'], 0, 2);
+        $horaFin = (int)substr($medico['horario_fin'], 0, 2);
+        
+        $horariosDisponibles = [];
+        
+        for ($hora = $horaInicio; $hora < $horaFin; $hora++) {
+            $horaFormato = sprintf('%02d:00:00', $hora);
+            
+            // CRÍTICO: Solo incluir si NO está ocupada
+            if (!in_array($horaFormato, $horasOcupadas)) {
+                $horariosDisponibles[] = [
+                    'hora' => $horaFormato,
+                    'hora_display' => sprintf('%02d:00', $hora),
+                    'disponible' => true
+                ];
+            }
+        }
+        
+        return $horariosDisponibles;
+    }
+    
+    /**
+     * Buscar citas por criterios
+     */
     public function searchCitas($search) {
         $searchTerm = "%{$search}%";
         
@@ -130,9 +213,15 @@ class Cita extends BaseModelo {
                 ORDER BY c.fecha_cita DESC, c.hora_cita DESC
                 LIMIT 50";
         
-        return $this->db->fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm]);
+        return $this->db->fetchAll($sql, [
+            $searchTerm, $searchTerm, $searchTerm, 
+            $searchTerm, $searchTerm, $searchTerm
+        ]);
     }
     
+    /**
+     * Obtener citas pendientes (programadas o confirmadas)
+     */
     public function getCitasPendientes($limite = 20) {
         $sql = "SELECT c.*, 
                        CONCAT(p.nombre, ' ', p.apellidos) as paciente_nombre,
@@ -152,6 +241,9 @@ class Cita extends BaseModelo {
         return $this->db->fetchAll($sql, [$limite]);
     }
     
+    /**
+     * Obtener estadísticas de citas
+     */
     public function getEstadisticas() {
         $stats = [];
         
@@ -188,20 +280,21 @@ class Cita extends BaseModelo {
         return $stats;
     }
     
+    /**
+     * Crear una nueva cita
+     */
     public function create($data) {
         // Generar código de cita si no se proporciona
         if (empty($data['codigo_cita'])) {
             $data['codigo_cita'] = $this->generateCodigoCita($data['fecha_cita']);
         }
         
-        // Establecer duración por defecto si no se especifica
-        if (empty($data['duracion_minutos'])) {
-            $data['duracion_minutos'] = 30;
-        }
-        
         return parent::create($data);
     }
     
+    /**
+     * Generar código único de cita
+     */
     private function generateCodigoCita($fecha) {
         $fechaFormato = date('Ymd', strtotime($fecha));
         
@@ -217,6 +310,9 @@ class Cita extends BaseModelo {
         return 'CIT' . $fechaFormato . $secuencial;
     }
     
+    /**
+     * Cambiar el estado de una cita
+     */
     public function cambiarEstado($id, $nuevoEstado) {
         $estadosValidos = ['programada', 'confirmada', 'en_curso', 'completada', 'cancelada', 'no_asistio'];
         
@@ -227,6 +323,9 @@ class Cita extends BaseModelo {
         return $this->update($id, ['estado' => $nuevoEstado]);
     }
     
+    /**
+     * Obtener citas para el calendario
+     */
     public function getCalendario($mes = null, $ano = null) {
         $mes = $mes ?: date('m');
         $ano = $ano ?: date('Y');
@@ -247,4 +346,3 @@ class Cita extends BaseModelo {
         return $this->db->fetchAll($sql, [$mes, $ano]);
     }
 }
-?>
