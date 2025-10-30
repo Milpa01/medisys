@@ -54,12 +54,6 @@
                     </button>
                 </form>
                 
-                <div class="text-center mt-3">
-                    <a href="<?= Router::url('recuperar') ?>" class="forgot-password">
-                        ¿Olvidaste tu contraseña?
-                    </a>
-                </div>
-                
                 <hr class="my-4">
                 
                 <div class="text-center text-muted">
