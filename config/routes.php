@@ -1,5 +1,4 @@
 <?php
-// Definición de rutas del sistema
 
 return [
     // Rutas de autenticación
