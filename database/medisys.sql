@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-10-2025 a las 12:21:55
+-- Tiempo de generación: 30-10-2025 a las 23:29:19
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -54,11 +54,9 @@ CREATE TABLE `citas` (
   `usuario_registro_id` int(11) NOT NULL,
   `fecha_cita` date NOT NULL,
   `hora_cita` time NOT NULL,
-  `duracion_minutos` int(11) DEFAULT 30,
   `motivo_consulta` varchar(255) NOT NULL,
   `notas` text DEFAULT NULL,
   `estado` enum('programada','confirmada','en_curso','completada','cancelada','no_asistio') DEFAULT 'programada',
-  `tipo_cita` enum('primera_vez','control','emergencia','especializada') DEFAULT 'primera_vez',
   `costo` decimal(10,2) DEFAULT 0.00,
   `observaciones` text DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
@@ -69,9 +67,11 @@ CREATE TABLE `citas` (
 -- Volcado de datos para la tabla `citas`
 --
 
-INSERT INTO `citas` (`id`, `codigo_cita`, `paciente_id`, `medico_id`, `usuario_registro_id`, `fecha_cita`, `hora_cita`, `duracion_minutos`, `motivo_consulta`, `notas`, `estado`, `tipo_cita`, `costo`, `observaciones`, `created_at`, `updated_at`) VALUES
-(1, 'CIT202509270001', 1, 1, 1, '2025-09-27', '10:00:00', 60, 'malesta estomacal', '', 'completada', 'primera_vez', 0.00, NULL, '2025-09-21 15:05:18', '2025-10-30 02:39:37'),
-(2, 'CIT202510290001', 1, 1, 3, '2025-10-29', '16:00:00', 30, 'Dolor de Cabeza', '', 'completada', 'control', 0.00, NULL, '2025-10-29 07:31:55', '2025-10-30 02:39:27');
+INSERT INTO `citas` (`id`, `codigo_cita`, `paciente_id`, `medico_id`, `usuario_registro_id`, `fecha_cita`, `hora_cita`, `motivo_consulta`, `notas`, `estado`, `costo`, `observaciones`, `created_at`, `updated_at`) VALUES
+(1, 'CIT202509270001', 1, 1, 1, '2025-09-27', '10:00:00', 'malesta estomacal', '', 'completada', 0.00, NULL, '2025-09-21 15:05:18', '2025-10-30 02:39:37'),
+(2, 'CIT202510290001', 1, 1, 3, '2025-10-29', '16:00:00', 'Dolor de Cabeza', '', 'completada', 0.00, NULL, '2025-10-29 07:31:55', '2025-10-30 02:39:27'),
+(3, 'CIT202510300001', 1, 1, 3, '2025-10-30', '16:00:00', 'Consulta general', '', 'completada', 0.00, NULL, '2025-10-30 15:03:39', '2025-10-30 16:20:57'),
+(4, 'CIT202510300002', 1, 1, 3, '2025-10-30', '17:00:00', 'Consulta general', '', 'completada', 0.00, NULL, '2025-10-30 16:20:03', '2025-10-30 16:22:39');
 
 --
 -- Disparadores `citas`
@@ -84,6 +84,39 @@ CREATE TRIGGER `tr_citas_codigo` BEFORE INSERT ON `citas` FOR EACH ROW BEGIN
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `citas_backup_20251030`
+--
+
+CREATE TABLE `citas_backup_20251030` (
+  `id` int(11) NOT NULL DEFAULT 0,
+  `codigo_cita` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `paciente_id` int(11) NOT NULL,
+  `medico_id` int(11) NOT NULL,
+  `usuario_registro_id` int(11) NOT NULL,
+  `fecha_cita` date NOT NULL,
+  `hora_cita` time NOT NULL,
+  `duracion_minutos` int(11) DEFAULT 30,
+  `motivo_consulta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `notas` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `estado` enum('programada','confirmada','en_curso','completada','cancelada','no_asistio') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'programada',
+  `tipo_cita` enum('primera_vez','control','emergencia','especializada') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'primera_vez',
+  `costo` decimal(10,2) DEFAULT 0.00,
+  `observaciones` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `citas_backup_20251030`
+--
+
+INSERT INTO `citas_backup_20251030` (`id`, `codigo_cita`, `paciente_id`, `medico_id`, `usuario_registro_id`, `fecha_cita`, `hora_cita`, `duracion_minutos`, `motivo_consulta`, `notas`, `estado`, `tipo_cita`, `costo`, `observaciones`, `created_at`, `updated_at`) VALUES
+(1, 'CIT202509270001', 1, 1, 1, '2025-09-27', '10:00:00', 60, 'malesta estomacal', '', 'completada', 'primera_vez', 0.00, NULL, '2025-09-21 15:05:18', '2025-10-30 02:39:37'),
+(2, 'CIT202510290001', 1, 1, 3, '2025-10-29', '16:00:00', 30, 'Dolor de Cabeza', '', 'completada', 'control', 0.00, NULL, '2025-10-29 07:31:55', '2025-10-30 02:39:27');
 
 -- --------------------------------------------------------
 
@@ -434,9 +467,45 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `username`, `nombre`, `apellidos`, `email`, `password`, `telefono`, `direccion`, `imagen`, `rol_id`, `is_active`, `ultimo_acceso`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'Administrador', 'Sistema', 'admin@medisys.com', 'e589c9c50ded1af49997ce52558aed6f26d0890e7738508aa907d59f6e4bdaca', '45043276', '', NULL, 1, 1, '2025-10-30 04:30:13', '2025-09-17 21:37:23', '2025-10-30 04:30:13'),
-(2, 'fergz', 'Fernando', 'Gómez', 'rodfergomez@gmail.com', 'f564129b4ebc8dae1c59c5958be92be05b024e88b82dc059ab3faee0fda386a9', '40363533', '10a calle 12-92 Zona 4', NULL, 2, 1, '2025-10-30 04:37:16', '2025-09-21 13:21:54', '2025-10-30 04:37:16'),
-(3, 'alonzo', 'Angela', 'Alonzo Miranda', 'madaiangela@gmail.com', '79fb97e99e0b375d0ce0422db1551dd1ff46d6c6079a3656b18f80f2e8fbe5c9', '53317986', '10a calle 12-92 Zona 4', NULL, 3, 1, '2025-10-30 04:35:35', '2025-09-21 13:23:16', '2025-10-30 04:35:35');
+(1, 'admin', 'Administrador', 'Sistema', 'admin@medisys.com', 'e589c9c50ded1af49997ce52558aed6f26d0890e7738508aa907d59f6e4bdaca', '45043276', '', NULL, 1, 1, '2025-10-30 05:47:27', '2025-09-17 21:37:23', '2025-10-30 05:47:27'),
+(2, 'fergz', 'Fernando', 'Gómez', 'rodfergomez@gmail.com', 'f564129b4ebc8dae1c59c5958be92be05b024e88b82dc059ab3faee0fda386a9', '40363533', '10a calle 12-92 Zona 4', NULL, 2, 1, '2025-10-30 16:20:52', '2025-09-21 13:21:54', '2025-10-30 16:20:52'),
+(3, 'alonzo', 'Angela', 'Alonzo', 'madaiangela@gmail.com', '79fb97e99e0b375d0ce0422db1551dd1ff46d6c6079a3656b18f80f2e8fbe5c9', '53317986', '10a calle 12-92 Zona 4', NULL, 3, 1, '2025-10-30 16:18:21', '2025-09-21 13:23:16', '2025-10-30 16:18:21');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura Stand-in para la vista `vista_citas_completas`
+-- (Véase abajo para la vista actual)
+--
+CREATE TABLE `vista_citas_completas` (
+`id` int(11)
+,`codigo_cita` varchar(20)
+,`fecha_cita` date
+,`hora_cita` time
+,`motivo_consulta` varchar(255)
+,`estado` enum('programada','confirmada','en_curso','completada','cancelada','no_asistio')
+,`costo` decimal(10,2)
+,`notas` text
+,`observaciones` text
+,`nombre_paciente` varchar(151)
+,`telefono_paciente` varchar(20)
+,`codigo_paciente` varchar(20)
+,`nombre_medico` varchar(151)
+,`especialidad` varchar(100)
+,`consultorio` varchar(50)
+,`registrado_por` varchar(151)
+,`created_at` datetime
+,`updated_at` datetime
+);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `vista_citas_completas`
+--
+DROP TABLE IF EXISTS `vista_citas_completas`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_citas_completas`  AS SELECT `c`.`id` AS `id`, `c`.`codigo_cita` AS `codigo_cita`, `c`.`fecha_cita` AS `fecha_cita`, `c`.`hora_cita` AS `hora_cita`, `c`.`motivo_consulta` AS `motivo_consulta`, `c`.`estado` AS `estado`, `c`.`costo` AS `costo`, `c`.`notas` AS `notas`, `c`.`observaciones` AS `observaciones`, concat(`p`.`nombre`,' ',`p`.`apellidos`) AS `nombre_paciente`, `p`.`telefono` AS `telefono_paciente`, `p`.`codigo_paciente` AS `codigo_paciente`, concat(`u`.`nombre`,' ',`u`.`apellidos`) AS `nombre_medico`, `e`.`nombre` AS `especialidad`, `med`.`consultorio` AS `consultorio`, concat(`ur`.`nombre`,' ',`ur`.`apellidos`) AS `registrado_por`, `c`.`created_at` AS `created_at`, `c`.`updated_at` AS `updated_at` FROM (((((`citas` `c` join `pacientes` `p` on(`c`.`paciente_id` = `p`.`id`)) join `medicos` `med` on(`c`.`medico_id` = `med`.`id`)) join `usuarios` `u` on(`med`.`usuario_id` = `u`.`id`)) join `especialidades` `e` on(`med`.`especialidad_id` = `e`.`id`)) join `usuarios` `ur` on(`c`.`usuario_registro_id` = `ur`.`id`)) WHERE `c`.`estado` <> 'cancelada' ;
 
 --
 -- Índices para tablas volcadas
@@ -576,7 +645,7 @@ ALTER TABLE `auditoria`
 -- AUTO_INCREMENT de la tabla `citas`
 --
 ALTER TABLE `citas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `configuraciones`
@@ -642,7 +711,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
